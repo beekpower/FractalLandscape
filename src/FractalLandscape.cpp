@@ -134,14 +134,11 @@ void displayMesh(void)
 
 void myKeyboard(unsigned char key, int x, int y)
 {
-    switch(key)
-    {
             if(key == 'a') {
                 cam.slide(0,0, 0.1);
             } else if(key == 'f') {
                 cam.slide(0,0, -0.1);
             }
-    }
     glutPostRedisplay(); // draw it again
 }
 
