@@ -137,6 +137,8 @@ bool lookLeft = false;
 bool lookRight = false;
 bool lookUp = false;
 bool lookDown = false;
+bool rollLeft = false;
+bool rollRight = false;
 
 // Keyboard for handling keyboard key down presses
 void myKeyboard(unsigned char key, int x, int y)
@@ -150,10 +152,16 @@ void myKeyboard(unsigned char key, int x, int y)
             lookUp = true;
         } else if(key == 's') {
             lookDown = true;
-        } else if(key =='a') {
+        } else if(key == 'a') {
             lookLeft = true;
-        } else if(key =='d') {
+        } else if(key == 'd') {
             lookRight = true;
+        }
+    
+        if(key == 'q') {
+            rollLeft = true;
+        } else if(key == 'e') {
+            rollRight = true;
         }
     glutPostRedisplay(); // draw it again
 }
@@ -167,6 +175,12 @@ void myKeyboardUp(unsigned char key, int x, int y) {
         lookLeft = false;
     } else if(key =='d') {
         lookRight = false;
+    }
+    
+    if(key == 'q') {
+        rollLeft = false;
+    } else if(key == 'e') {
+        rollRight = false;
     }
 }
 
@@ -217,6 +231,12 @@ void idleFlying()
         cam.pitch(-lookSpeed);
     } else if(lookDown) {
         cam.pitch(lookSpeed);
+    }
+    
+    if(rollLeft) {
+        cam.roll(-lookSpeed * 2);
+    } else if(rollRight) {
+        cam.roll(lookSpeed * 2);
     }
     
     glutPostRedisplay();
