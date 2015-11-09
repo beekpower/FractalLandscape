@@ -130,6 +130,55 @@ void displayMesh(void)
     glFlush();
     glutSwapBuffers();
 }
+
+
+void myKeyboard(unsigned char key, int x, int y)
+{
+    switch(key)
+    {
+            if(key == 'a') {
+                cam.slide(0,0, 0.1);
+            } else if(key == 'f') {
+                cam.slide(0,0, -0.1);
+            }
+    }
+    glutPostRedisplay(); // draw it again
+}
+
+int lastx = 0;
+int move = 0;
+
+void myMovedMouse(int x, int y)
+{
+    cam.yaw((x - lastx)/10.0); //divide by 20.0 to make it slower
+    lastx = x;
+    glutPostRedisplay();
+}
+
+void myMouse(int button, int state, int x, int y)
+{
+    if(state == GLUT_DOWN)
+    {
+        if(button == GLUT_LEFT_BUTTON)
+        {
+            lastx=x;
+            move = -0.1; //forward movement amount
+        }
+        else if(button == GLUT_RIGHT_BUTTON)
+        {
+            move = 0.1; //backward movement amount
+        }
+    }
+    else
+        move = 0.0;
+}
+
+void myFly()
+{
+    cam.slide(0,0,move);
+    glutPostRedisplay();
+}
+
 int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
@@ -138,6 +187,9 @@ int main(int argc, char** argv)
     glutInitWindowPosition(100, 100);
     glutCreateWindow("fly");
     glutDisplayFunc(displayMesh);
+    glutKeyboardFunc(myKeyboard);
+    glutMotionFunc(myMovedMouse);
+    glutMouseFunc(myMouse);
     //turn on the lights
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
