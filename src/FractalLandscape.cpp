@@ -131,14 +131,17 @@ void displayMesh(void)
     glutSwapBuffers();
 }
 
-
 void myKeyboard(unsigned char key, int x, int y)
 {
-            if(key == 'a') {
-                cam.slide(0,0, 0.1);
-            } else if(key == 'f') {
-                cam.slide(0,0, -0.1);
-            }
+        if(key == 's') {
+            cam.slide(0,0, 0.1);
+        } else if(key == 'w') {
+            cam.slide(0,0, -0.1);
+        } else if(key == 'a') {
+            cam.pitch(-1);
+        } else if(key == 'd') {
+            cam.pitch(1);
+        }
     glutPostRedisplay(); // draw it again
 }
 
