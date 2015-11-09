@@ -132,6 +132,13 @@ void displayMesh(void)
     glutSwapBuffers();
 }
 
+// Some handles for controlling what direction is being pressed
+bool lookLeft = false;
+bool lookRight = false;
+bool lookUp = false;
+bool lookDown = false;
+
+// Keyboard for handling keyboard key down presses
 void myKeyboard(unsigned char key, int x, int y)
 {/*
         if(key == 's') {
@@ -140,15 +147,27 @@ void myKeyboard(unsigned char key, int x, int y)
             cam.slide(0,0, -0.1);
         } */
         if(key == 'w') {
-            cam.pitch(-1);
+            lookUp = true;
         } else if(key == 's') {
-            cam.pitch(1);
+            lookDown = true;
         } else if(key =='a') {
-            cam.yaw(-1);
+            lookLeft = true;
         } else if(key =='d') {
-            cam.yaw(1);
+            lookRight = true;
         }
     glutPostRedisplay(); // draw it again
+}
+
+void myKeyboardUp(unsigned char key, int x, int y) {
+    if(key == 'w') {
+        lookUp = false;
+    } else if(key == 's') {
+        lookDown = false;
+    } else if(key =='a') {
+        lookLeft = false;
+    } else if(key =='d') {
+        lookRight = false;
+    }
 }
 
 int lastx = 0;
@@ -167,7 +186,7 @@ void myMouse(int button, int state, int x, int y)
     {
         if(button == GLUT_LEFT_BUTTON)
         {
-            lastx=x;
+            lastx = x;
             currentCameraSpeed = -0.005; //forward movement amount
         }
         else if(button == GLUT_RIGHT_BUTTON)
@@ -178,12 +197,28 @@ void myMouse(int button, int state, int x, int y)
             }
         }
     }
+
     glutPostRedisplay(); // draw it again
 }
 
+float lookSpeed = 0.3;
 void idleFlying()
 {
     cam.slide(0,0,currentCameraSpeed);
+    
+    // Let's see if we need to move in and look in any direction
+    if(lookLeft) {
+        cam.yaw(-lookSpeed);
+    } else if(lookRight) {
+        cam.yaw(lookSpeed);
+    }
+    
+    if(lookUp) {
+        cam.pitch(-lookSpeed);
+    } else if(lookDown) {
+        cam.pitch(lookSpeed);
+    }
+    
     glutPostRedisplay();
 }
 
@@ -196,6 +231,7 @@ int main(int argc, char** argv)
     glutCreateWindow("fly");
     glutDisplayFunc(displayMesh);
     glutKeyboardFunc(myKeyboard);
+    glutKeyboardUpFunc(myKeyboardUp);
     glutMotionFunc(myMovedMouse);
     glutMouseFunc(myMouse);
     glutIdleFunc(idleFlying);
