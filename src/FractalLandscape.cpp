@@ -118,6 +118,7 @@ void myInit()
     look.set(0,0,0); //set the look at coord
     up.set(0,1,0); //specify the up vector
     cam.set(eye, look, up); // make the initial camera
+    cam.slide(0,0, 1.5);
     cam.setShape(30.0f, 1.0f, 0.5f, 50.0f);
 }
 //glutDisplayFunc
@@ -146,7 +147,7 @@ void myKeyboard(unsigned char key, int x, int y)
 }
 
 int lastx = 0;
-int move = 0;
+float currentCameraSpeed = 0;
 
 void myMovedMouse(int x, int y)
 {
@@ -162,20 +163,22 @@ void myMouse(int button, int state, int x, int y)
         if(button == GLUT_LEFT_BUTTON)
         {
             lastx=x;
-            move = -0.1; //forward movement amount
+            currentCameraSpeed = -0.005; //forward movement amount
         }
         else if(button == GLUT_RIGHT_BUTTON)
         {
-            move = 0.1; //backward movement amount
+            currentCameraSpeed = 0.01; //backward movement amount
+            if(currentCameraSpeed > 0) {
+                currentCameraSpeed = 0;
+            }
         }
     }
-    else
-        move = 0.0;
+    glutPostRedisplay(); // draw it again
 }
 
-void myFly()
+void idleFlying()
 {
-    cam.slide(0,0,move);
+    cam.slide(0,0,currentCameraSpeed);
     glutPostRedisplay();
 }
 
@@ -190,6 +193,7 @@ int main(int argc, char** argv)
     glutKeyboardFunc(myKeyboard);
     glutMotionFunc(myMovedMouse);
     glutMouseFunc(myMouse);
+    glutIdleFunc(idleFlying);
     //turn on the lights
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
