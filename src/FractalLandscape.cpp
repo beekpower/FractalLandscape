@@ -133,15 +133,20 @@ void displayMesh(void)
 }
 
 void myKeyboard(unsigned char key, int x, int y)
-{
+{/*
         if(key == 's') {
             cam.slide(0,0, 0.1);
         } else if(key == 'w') {
             cam.slide(0,0, -0.1);
-        } else if(key == 'a') {
+        } */
+        if(key == 'w') {
             cam.pitch(-1);
-        } else if(key == 'd') {
+        } else if(key == 's') {
             cam.pitch(1);
+        } else if(key =='a') {
+            cam.yaw(-1);
+        } else if(key =='d') {
+            cam.yaw(1);
         }
     glutPostRedisplay(); // draw it again
 }
