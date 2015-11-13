@@ -5,9 +5,18 @@
 
 //other header files
 #include <stdio.h>
+
+#ifdef __linux__
+#include "GL/freeglut.h"
+#include "GL/gl.h"
+#elif _WIN32
 #include "GL\freeglut.h"
-//#include <freeglut.h>
-//#include "util.h"
+#elif __APPLE__
+#include <freeglut.h>
+#endif
+
+
+
 #include "camera.h" //download from course website
 
 #define MW 150
