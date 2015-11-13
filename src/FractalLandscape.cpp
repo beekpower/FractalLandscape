@@ -9,8 +9,8 @@
 #include "util.h"
 #include "camera.h" //download from course website
 
-#define MW 100
-#define MH 100
+#define MW 150
+#define MH 150
 GLfloat Mesh[MH][MW][3]; //make a mesh 100 x 100 with x, y and z
 Vector3 Normals[MW][MH];
 Camera cam; // global camera object
@@ -77,12 +77,30 @@ void createMesh()
 //take the mesh and draw it using GL_QUADS
 void drawMesh()
 {
+    double min = 9999;
+    double max = 0;
     glPushMatrix();
+    glColorMaterial(GL_FRONT, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
     for(int i = 0; i < MH-1; i++)
     {
         for(int j = 0; j < MW-1; j++)
         {
+            
             glBegin(GL_QUADS);
+            double yValue = Mesh[i][j][1];
+            if(yValue > max) {
+                max = yValue;
+            }
+            if(yValue < min) {
+                min = yValue;
+            }
+            if(yValue < 0) {
+                // this is below 'sea level'
+                glColor3f(0, 0, .8 - yValue);
+            } else {
+                    glColor3f(0, yValue + 0.4, 0);
+            }
             glNormal3f(Normals[i][j].x,
                        Normals[i][j].y, Normals[i][j].z);
             glVertex3f(Mesh[i][j][0],Mesh[i][j][1],
@@ -261,7 +279,8 @@ int main(int argc, char** argv)
     glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
-    glClearColor(0.1f,0.1f,0.1f,0.0f);
+    //glClearColor(0.1f,0.1f,0.1f,0.0f);
+    glColor3f(255.0, 255.0, 255.0);
     glViewport(0,0, 600, 600);
     myInit();
     glutMainLoop();
