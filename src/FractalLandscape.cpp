@@ -23,6 +23,11 @@
 #define MH 150
 GLfloat Mesh[MH][MW][3]; //make a mesh 100 x 100 with x, y and z
 Vector3 Normals[MW][MH];
+
+// Water mesh
+GLfloat waterMesh[MH][MW][3]; //make a mesh 100 x 100 with x, y and z
+Vector3 waterNormals[MW][MH];
+
 Camera cam; // global camera object
 //quick and nasty normal calculation
 Vector3 newell4(GLfloat pt[4][3])
@@ -56,16 +61,7 @@ void createMesh()
 			
             Mesh[i][j][0] = x;
             Mesh[i][j][2] = z;
-			if ((cos(x * 10) / 10.0 +
-				sin(z * 10) / 10.0 + rand() % 5 / 200.0) > 0)
-			{
-				Mesh[i][j][1] = cos(x * 10) / 10.0 +
-					sin(z * 10) / 10.0 + rand() % 5 / 200.0;
-			}
-			else
-			{
-				Mesh[i][j][1] = cos(z * 20.0) / 85.0 - 0.02;
-			}
+            Mesh[i][j][1] = cos(x * 10) / 10.0 + sin(z * 10) / 10.0 + rand() % 5 / 200.0;
 			x += xinc;
         }
         z+= zinc;
@@ -92,6 +88,45 @@ void createMesh()
             Normals[i][j] = newell4(pt);
         }
     }
+    
+    //set Mesh points x and z will range from [-1,1]
+    xinc = 2/(float)MH;
+    zinc = 2/ (float)MW;
+    x = -1;
+    z = -1;
+    for(int i = 0; i < MH; i++)
+    {
+        for(int j = 0; j < MW; j++)
+        {
+            
+            waterMesh[i][j][0] = x;
+            waterMesh[i][j][2] = z;
+            waterMesh[i][j][1] = (cos(z * 20.0) / 85.0 - 0.02) + .05;
+            x += xinc;
+        }
+        z+= zinc;
+        x = -1;
+    }
+    //calculate normals
+    for(int i = 0; i < MH-1; i++)
+    {
+        for(int j = 0; j < MW-1; j++)
+        {
+            pt[0][0] = waterMesh[i][j][0];
+            pt[0][1] = waterMesh[i][j][1];
+            pt[0][2] = waterMesh[i][j][2];
+            pt[1][0] = waterMesh[i+1][j][0];
+            pt[1][1] = waterMesh[i+1][j][1];
+            pt[1][2] = waterMesh[i+1][j][2];
+            pt[2][0] = waterMesh[i+1][j+1][0];
+            pt[2][1] = waterMesh[i+1][j+1][1];
+            pt[2][2] = waterMesh[i+1][j+1][2];
+            pt[3][0] = waterMesh[i][j+1][0];
+            pt[3][1] = waterMesh[i][j+1][1];
+            pt[3][2] = waterMesh[i][j+1][2];
+            waterNormals[i][j] = newell4(pt);
+        }
+    }
 }
 //take the mesh and draw it using GL_QUADS
 void drawMesh()
@@ -114,12 +149,15 @@ void drawMesh()
             if(yValue < min) {
                 min = yValue;
             }
+            
             if(yValue < 0) {
-                // this is below 'sea level'
-                glColor3f(0, 0, .8 - (yValue * 20));
+                // below sealevel
+                glColor3f(yValue + 0.19, yValue + 0.19, yValue + 0.19);
             } else {
-                    glColor3f(0, yValue + 0.4, 0);
+                glColor3f(0, yValue + 0.4, 0);
             }
+            
+            // let's draw the land
             glNormal3f(Normals[i][j].x,
                        Normals[i][j].y, Normals[i][j].z);
             glVertex3f(Mesh[i][j][0],Mesh[i][j][1],
@@ -136,6 +174,27 @@ void drawMesh()
                        Normals[i+1][j].z);
             glVertex3f(Mesh[i+1][j][0],Mesh[i+1][j][1],
                        Mesh[i+1][j][2]);
+            glEnd();
+            
+            // and now draw the ocean
+            glBegin(GL_QUADS);
+            glColor4f(0, 0, .8 - (yValue * 20), 0.08);
+            glNormal3f(waterNormals[i][j].x,
+                       waterNormals[i][j].y, waterNormals[i][j].z);
+            glVertex3f(waterMesh[i][j][0],waterMesh[i][j][1] - .2,
+                       waterMesh[i][j][2]);
+            glNormal3f(waterNormals[i][j+1].x, waterNormals[i][j+1].y,
+                       waterNormals[i][j+1].z);
+            glVertex3f(waterMesh[i][j+1][0],waterMesh[i][j+1][1],
+                       waterMesh[i][j+1][2]);
+            glNormal3f(waterNormals[i+1][j+1].x,
+                       waterNormals[i+1][j+1].y, waterNormals[i+1][j+1].z);
+            glVertex3f(waterMesh[i+1][j+1][0], waterMesh[i+1][j+1][1],
+                       waterMesh[i+1][j+1][2]);
+            glNormal3f(waterNormals[i+1][j].x, waterNormals[i+1][j].y,
+                       waterNormals[i+1][j].z);
+            glVertex3f(waterMesh[i+1][j][0],waterMesh[i+1][j][1],
+                       waterMesh[i+1][j][2]);
             glEnd();
         }
     }
@@ -309,6 +368,8 @@ int main(int argc, char** argv)
     glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glClearColor(0.1f,0.1f,0.1f,0.0f);
     glColor3f(255.0, 255.0, 255.0);
     glViewport(0,0, 600, 600);
