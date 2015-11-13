@@ -5,8 +5,9 @@
 
 //other header files
 #include <stdio.h>
-#include <freeglut.h>
-#include "util.h"
+#include "GL\freeglut.h"
+//#include <freeglut.h>
+//#include "util.h"
 #include "camera.h" //download from course website
 
 #define MW 150
@@ -43,11 +44,20 @@ void createMesh()
     {
         for(int j = 0; j < MW; j++)
         {
+			
             Mesh[i][j][0] = x;
             Mesh[i][j][2] = z;
-            Mesh[i][j][1] = cos(x*10)/10.0 +
-            sin(z*10)/10.0 + rand()%5/200.0;
-            x+= xinc;
+			if ((cos(x * 10) / 10.0 +
+				sin(z * 10) / 10.0 + rand() % 5 / 200.0) > 0)
+			{
+				Mesh[i][j][1] = cos(x * 10) / 10.0 +
+					sin(z * 10) / 10.0 + rand() % 5 / 200.0;
+			}
+			else
+			{
+				Mesh[i][j][1] = cos(z * 20.0) / 85.0 - 0.02;
+			}
+			x += xinc;
         }
         z+= zinc;
         x = -1;
@@ -97,7 +107,7 @@ void drawMesh()
             }
             if(yValue < 0) {
                 // this is below 'sea level'
-                glColor3f(0, 0, .8 - yValue);
+                glColor3f(0, 0, .8 - (yValue * 20));
             } else {
                     glColor3f(0, yValue + 0.4, 0);
             }
