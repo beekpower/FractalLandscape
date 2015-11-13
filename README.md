@@ -10,3 +10,4 @@ Left mouse click moves forward, right mouse click stops forward motion
 'w' looks up, 's' looks down
 'a' looks left, 'd' looks right
 'q' rolls left, 'e' rolls right
+'h' teleports back to the home (starting) location

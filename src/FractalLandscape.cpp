@@ -200,6 +200,17 @@ void myKeyboard(unsigned char key, int x, int y)
         } else if(key == 'e') {
             rollRight = true;
         }
+    
+        if(key == 'h') {
+            Point3 eye, look;
+            Vector3 up;
+            eye.set(1,1,1); //set the eye location
+            look.set(0,0,0); //set the look at coord
+            up.set(0,1,0); //specify the up vector
+            cam.set(eye, look, up); // make the initial camera
+            cam.slide(0,0, 1.5);
+            cam.setShape(30.0f, 1.0f, 0.5f, 50.0f);
+        }
     glutPostRedisplay(); // draw it again
 }
 
