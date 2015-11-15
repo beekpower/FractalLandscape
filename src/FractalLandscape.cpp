@@ -24,6 +24,8 @@
 GLfloat Mesh[MH][MW][3]; //make a mesh 100 x 100 with x, y and z
 Vector3 Normals[MW][MH];
 
+GLuint landscapeTile;
+
 Camera cam; // global camera object
 //quick and nasty normal calculation
 Vector3 newell4(GLfloat pt[4][3])
@@ -86,8 +88,11 @@ void createMesh()
     }
 }
 //take the mesh and draw it using GL_QUADS
-void drawMesh()
+void generateMesh()
 {
+    landscapeTile = glGenLists(1);
+    glNewList(landscapeTile, GL_COMPILE );
+    
     double min = 9999;
     double max = 0;
     glPushMatrix();
@@ -138,11 +143,13 @@ void drawMesh()
         }
     }
     glPopMatrix();
+    glEndList();
 }
 //initialise the display settings
 void myInit()
 {
     createMesh();
+    generateMesh();
     GLfloat lightIntensity[] = {0.9, 0.9, 0.9, 1.0f};
     GLfloat lightPosition[]={0.0f,1.0f, 0.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
@@ -164,44 +171,44 @@ void displayMesh(void)
     glColor3f(1,1,1);
     glPushMatrix();
         glTranslated(1.9,0, 0);
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
     glPushMatrix();
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
     glPushMatrix();
         glTranslated(-1.9,0, 0);
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
     
     glPushMatrix();
         glTranslated(0,0, -1.9);
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
     
     glPushMatrix();
         glTranslated(0,0, 1.9);
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
     
     glPushMatrix();
         glTranslated(1.9,0, 1.9);
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
     
     glPushMatrix();
         glTranslated(-1.9,0, 1.9);
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
     
     glPushMatrix();
         glTranslated(-1.9,0, -1.9);
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
     
     glPushMatrix();
         glTranslated(1.9,0, -1.9);
-        drawMesh();
+        glCallList(landscapeTile);
     glPopMatrix();
 
     
