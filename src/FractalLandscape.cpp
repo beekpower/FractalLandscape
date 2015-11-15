@@ -114,11 +114,16 @@ void generateMesh()
                 min = yValue;
             }
             
-            if(yValue < 0 && yValue > -0.3) {
-                //yValue += 1;
-                // below sealevel
-                //glColor3ub(205,133,63);
-                
+            if(yValue > 0 && yValue < .3) {
+                //go from (0,102,0) -> (139,69,19)
+                float adjustedRed = yValue * 850.0f;
+                float adjustedGreen = 102.0f - (yValue * 82.5f);
+                float adjustedBlue = yValue * 47.5f;
+                glColor3ub(adjustedRed,adjustedGreen,adjustedBlue);
+            } else if(yValue > 0.3) {
+                glColor3ub(230,232,227);
+            } else if(yValue < 0 && yValue > -0.3) {
+                // transition from seafloor to grass
                 float adjustedRed = (fabs(yValue) * 850.0f);
                 if(adjustedRed < 0) {
                     adjustedRed = 0;
@@ -133,9 +138,11 @@ void generateMesh()
                 }
                 glColor3ub(adjustedRed,adjustedGreen,adjustedBlue);
             } else if(yValue < -0.3) {
+                // seafloor yellowish
                 glColor3ub(239.67,227.47,59.2);
             } else {
                 //glColor3f(0, yValue + 0.4, 0);
+                // normal grass green
                 glColor3ub(0,102,0);
             }
             // let's draw the land
