@@ -19,8 +19,8 @@
 
 #include "camera.h" //download from course website
 
-#define MW 150
-#define MH 150
+#define MW 60
+#define MH 60
 GLfloat Mesh[MH][MW][3]; //make a mesh 100 x 100 with x, y and z
 Vector3 Normals[MW][MH];
 
@@ -57,7 +57,7 @@ void createMesh()
 			
             Mesh[i][j][0] = x;
             Mesh[i][j][2] = z;
-            Mesh[i][j][1] = cos(x * 10) / 10.0 + sin(z * 10) / 10.0 + rand() % 5 / 200.0;
+            Mesh[i][j][1] = ((cos(x * 3) / 10.0 + sin((z+.5) * 3) / 10.0 + rand() % 5 / 1050.0) * 3) - 0.1;
 			x += xinc;
         }
         z+= zinc;
@@ -101,6 +101,7 @@ void drawMesh()
             
             double yValue = Mesh[i][j][1];
             double xValue = Mesh[i][j][0];
+            double zValue = Mesh[i][j][2];
             if(yValue > max) {
                 max = yValue;
             }
@@ -115,37 +116,27 @@ void drawMesh()
             } else {
                 glColor3f(0, yValue + 0.4, 0);
             }
-            
-            if(xValue > -50) {
-                // let's draw the land
-                glBegin(GL_QUADS);
-                glNormal3f(Normals[i][j].x,
-                           Normals[i][j].y, Normals[i][j].z);
-                glVertex3f(Mesh[i][j][0],Mesh[i][j][1],
-                           Mesh[i][j][2]);
-                glNormal3f(Normals[i][j+1].x, Normals[i][j+1].y,
-                           Normals[i][j+1].z);
-                glVertex3f(Mesh[i][j+1][0],Mesh[i][j+1][1],
-                           Mesh[i][j+1][2]);
-                glNormal3f(Normals[i+1][j+1].x,
-                           Normals[i+1][j+1].y, Normals[i+1][j+1].z);
-                glVertex3f(Mesh[i+1][j+1][0],Mesh[i+1][j+1][1],
-                           Mesh[i+1][j+1][2]);
-                glNormal3f(Normals[i+1][j].x, Normals[i+1][j].y,
-                           Normals[i+1][j].z);
-                glVertex3f(Mesh[i+1][j][0],Mesh[i+1][j][1],
-                           Mesh[i+1][j][2]);
-                glEnd();
-            }
+            // let's draw the land
+            glBegin(GL_QUADS);
+            glNormal3f(Normals[i][j].x,
+                       Normals[i][j].y, Normals[i][j].z);
+            glVertex3f(Mesh[i][j][0],Mesh[i][j][1],
+                       Mesh[i][j][2]);
+            glNormal3f(Normals[i][j+1].x, Normals[i][j+1].y,
+                       Normals[i][j+1].z);
+            glVertex3f(Mesh[i][j+1][0],Mesh[i][j+1][1],
+                       Mesh[i][j+1][2]);
+            glNormal3f(Normals[i+1][j+1].x,
+                       Normals[i+1][j+1].y, Normals[i+1][j+1].z);
+            glVertex3f(Mesh[i+1][j+1][0],Mesh[i+1][j+1][1],
+                       Mesh[i+1][j+1][2]);
+            glNormal3f(Normals[i+1][j].x, Normals[i+1][j].y,
+                       Normals[i+1][j].z);
+            glVertex3f(Mesh[i+1][j][0],Mesh[i+1][j][1],
+                       Mesh[i+1][j][2]);
+            glEnd();
         }
     }
-    glPopMatrix();
-    
-    glPushMatrix();
-    glColor4f(0, 0, .8, 0.4);
-    glTranslated(0,-0.1, 0);
-    glScaled(23, .12, 23);
-    glutSolidCube(1.0);
     glPopMatrix();
 }
 //initialise the display settings
@@ -171,7 +162,56 @@ void displayMesh(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3f(1,1,1);
-    drawMesh();
+    glPushMatrix();
+        glTranslated(1.9,0, 0);
+        drawMesh();
+    glPopMatrix();
+    glPushMatrix();
+        drawMesh();
+    glPopMatrix();
+    glPushMatrix();
+        glTranslated(-1.9,0, 0);
+        drawMesh();
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(0,0, -1.9);
+        drawMesh();
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(0,0, 1.9);
+        drawMesh();
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(1.9,0, 1.9);
+        drawMesh();
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(-1.9,0, 1.9);
+        drawMesh();
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(-1.9,0, -1.9);
+        drawMesh();
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(1.9,0, -1.9);
+        drawMesh();
+    glPopMatrix();
+
+    
+    glPushMatrix();
+    glColor4f(0, 0, .8, 0.4);
+    glTranslated(0,-0.1, 0);
+    glScaled(23, .12, 23);
+    glutSolidCube(1.0);
+    glPopMatrix();
+    
     glFlush();
     glutSwapBuffers();
 }
