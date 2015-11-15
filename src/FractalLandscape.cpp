@@ -19,8 +19,8 @@
 
 #include "camera.h" //download from course website
 
-#define MW 60
-#define MH 60
+#define MW 80
+#define MH 80
 GLfloat Mesh[MH][MW][3]; //make a mesh 100 x 100 with x, y and z
 Vector3 Normals[MW][MH];
 
@@ -114,12 +114,29 @@ void generateMesh()
                 min = yValue;
             }
             
-            if(yValue < 0) {
+            if(yValue < 0 && yValue > -0.3) {
+                //yValue += 1;
                 // below sealevel
-                //glColor3f(yValue + 0.19, yValue + 0.19, yValue + 0.19);
-                glColor3ub(205,133,63);
+                //glColor3ub(205,133,63);
+                
+                float adjustedRed = (fabs(yValue) * 850.0f);
+                if(adjustedRed < 0) {
+                    adjustedRed = 0;
+                }
+                float adjustedGreen = 102.0f + (fabs(yValue) * 445.0f);
+                if(adjustedGreen < 102) {
+                    adjustedGreen = 102;
+                }
+                float adjustedBlue = (fabs(yValue) * 210.0f);
+                if(adjustedGreen < 0) {
+                    adjustedGreen = 0;
+                }
+                glColor3ub(adjustedRed,adjustedGreen,adjustedBlue);
+            } else if(yValue < -0.3) {
+                glColor3ub(239.67,227.47,59.2);
             } else {
-                glColor3f(0, yValue + 0.4, 0);
+                //glColor3f(0, yValue + 0.4, 0);
+                glColor3ub(0,102,0);
             }
             // let's draw the land
             glBegin(GL_QUADS);
@@ -211,10 +228,9 @@ void displayMesh(void)
         glCallList(landscapeTile);
     glPopMatrix();
 
-    
     glPushMatrix();
     glColor4f(0, 0, .8, 0.4);
-    glTranslated(0,-0.1, 0);
+    glTranslated(0,-0.25, 0);
     glScaled(23, .12, 23);
     glutSolidCube(1.0);
     glPopMatrix();
