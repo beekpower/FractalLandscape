@@ -56,7 +56,7 @@ void createMesh()
     {
         for(int j = 0; j < MW; j++)
         {
-			
+
             Mesh[i][j][0] = x;
             Mesh[i][j][2] = z;
             Mesh[i][j][1] = ((cos(x * 3) / 10.0 + sin((z+.5) * 3) / 10.0 + rand() % 5 / 1050.0) * 3) - 0.1;
@@ -92,7 +92,7 @@ void generateMesh()
 {
     landscapeTile = glGenLists(1);
     glNewList(landscapeTile, GL_COMPILE );
-    
+
     double min = 9999;
     double max = 0;
     glPushMatrix();
@@ -102,8 +102,8 @@ void generateMesh()
     {
         for(int j = 0; j < MW-1; j++)
         {
-            
-            
+
+
             double yValue = Mesh[i][j][1];
             double xValue = Mesh[i][j][0];
             double zValue = Mesh[i][j][2];
@@ -113,7 +113,7 @@ void generateMesh()
             if(yValue < min) {
                 min = yValue;
             }
-            
+
             if(yValue > 0 && yValue < .3) {
                 //go from (0,102,0) -> (139,69,19)
                 float adjustedRed = yValue * 850.0f;
@@ -204,32 +204,32 @@ void displayMesh(void)
         glTranslated(-1.9,0, 0);
         glCallList(landscapeTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(0,0, -1.9);
         glCallList(landscapeTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(0,0, 1.9);
         glCallList(landscapeTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(1.9,0, 1.9);
         glCallList(landscapeTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(-1.9,0, 1.9);
         glCallList(landscapeTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(-1.9,0, -1.9);
         glCallList(landscapeTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(1.9,0, -1.9);
         glCallList(landscapeTile);
@@ -241,9 +241,9 @@ void displayMesh(void)
     glScaled(23, .12, 23);
     glutSolidCube(1.0);
     glPopMatrix();
-    
+
     glFlush();
-    glutSwapBuffers();
+    glutPostRedisplay();
 }
 
 // Some handles for controlling what direction is being pressed
@@ -271,13 +271,13 @@ void myKeyboard(unsigned char key, int x, int y)
         } else if(key == 'd') {
             lookRight = true;
         }
-    
+
         if(key == 'q') {
             rollLeft = true;
         } else if(key == 'e') {
             rollRight = true;
         }
-    
+
         if(key == 'h') {
             Point3 eye, look;
             Vector3 up;
@@ -301,7 +301,7 @@ void myKeyboardUp(unsigned char key, int x, int y) {
     } else if(key =='d') {
         lookRight = false;
     }
-    
+
     if(key == 'q') {
         rollLeft = false;
     } else if(key == 'e') {
@@ -344,33 +344,33 @@ float lookSpeed = 0.3;
 void idleFlying()
 {
     cam.slide(0,0,currentCameraSpeed);
-    
+
     // Let's see if we need to move in and look in any direction
     if(lookLeft) {
         cam.yaw(-lookSpeed);
     } else if(lookRight) {
         cam.yaw(lookSpeed);
     }
-    
+
     if(lookUp) {
         cam.pitch(-lookSpeed);
     } else if(lookDown) {
         cam.pitch(lookSpeed);
     }
-    
+
     if(rollLeft) {
         cam.roll(-lookSpeed * 2);
     } else if(rollRight) {
         cam.roll(lookSpeed * 2);
     }
-    
+
     glutPostRedisplay();
 }
 
 int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH );
     glutInitWindowSize(800,800);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("fly");
@@ -395,5 +395,3 @@ int main(int argc, char** argv)
     glutMainLoop();
     return 1;
 }
-
-

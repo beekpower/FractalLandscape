@@ -52,7 +52,7 @@ private:
     Vector3 u,v,n;
     double viewAngle, aspect, nearDist, farDist; // view volume shape
     void setModelViewMatrix(); // tell OpenGL where the camera is
-    
+
 public:
     Camera(void){}; // default constructor
     void set(Point3 eye, Point3 look, Vector3 up); // like gluLookAt()
@@ -160,9 +160,6 @@ void Camera :: rotate (Vector3 axis, float angle)
     *oldu.y +(cs +(1-cs)*u.z*u.z)*v.y;
     v.z=((1-cs)*u.x*u.z -sn*u.y)*oldn.z +((1-cs)*u.y*u.z+sn*u.y)
     *oldu.z +(cs +(1-cs)*u.z*u.z)*v.z;
-    
+
     setModelViewMatrix();
 }
-
-
-
