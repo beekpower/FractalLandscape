@@ -24,7 +24,10 @@
 GLfloat Mesh[MH][MW][3]; //make a mesh 100 x 100 with x, y and z
 Vector3 Normals[MW][MH];
 
-GLuint landscapeTile;
+GLuint landscapeWinterTile;
+GLuint landscapeFallTile;
+GLuint landscapeSpringTile;
+GLuint landscapeSummerTile;
 
 Camera cam; // global camera object
 //quick and nasty normal calculation
@@ -87,11 +90,11 @@ void createMesh()
         }
     }
 }
-//take the mesh and draw it using GL_QUADS
-void generateMesh()
+
+void generateWinterMesh()
 {
-    landscapeTile = glGenLists(1);
-    glNewList(landscapeTile, GL_COMPILE );
+    landscapeWinterTile = glGenLists(1);
+    glNewList(landscapeWinterTile, GL_COMPILE );
 
     double min = 9999;
     double max = 0;
@@ -114,6 +117,82 @@ void generateMesh()
                 min = yValue;
             }
 
+            if(yValue > 0) {
+                glColor3ub(230,232,227);
+            } else if(yValue < 0 && yValue > -0.3) {
+                // transition from seafloor to grass
+                float adjustedRed = (fabs(yValue) * 850.0f);
+                if(adjustedRed < 0) {
+                    adjustedRed = 0;
+                }
+                float adjustedGreen = 102.0f + (fabs(yValue) * 445.0f);
+                if(adjustedGreen < 102) {
+                    adjustedGreen = 102;
+                }
+                float adjustedBlue = (fabs(yValue) * 210.0f);
+                if(adjustedGreen < 0) {
+                    adjustedGreen = 0;
+                }
+                glColor3ub(adjustedRed,adjustedGreen,adjustedBlue);
+            } else if(yValue < -0.3) {
+                // seafloor yellowish
+                glColor3ub(239.67,227.47,59.2);
+            } else {
+                //glColor3f(0, yValue + 0.4, 0);
+                // normal grass green
+                glColor3ub(0,102,0);
+            }
+            // let's draw the land
+            glBegin(GL_QUADS);
+            glNormal3f(Normals[i][j].x,
+                       Normals[i][j].y, Normals[i][j].z);
+            glVertex3f(Mesh[i][j][0],Mesh[i][j][1],
+                       Mesh[i][j][2]);
+            glNormal3f(Normals[i][j+1].x, Normals[i][j+1].y,
+                       Normals[i][j+1].z);
+            glVertex3f(Mesh[i][j+1][0],Mesh[i][j+1][1],
+                       Mesh[i][j+1][2]);
+            glNormal3f(Normals[i+1][j+1].x,
+                       Normals[i+1][j+1].y, Normals[i+1][j+1].z);
+            glVertex3f(Mesh[i+1][j+1][0],Mesh[i+1][j+1][1],
+                       Mesh[i+1][j+1][2]);
+            glNormal3f(Normals[i+1][j].x, Normals[i+1][j].y,
+                       Normals[i+1][j].z);
+            glVertex3f(Mesh[i+1][j][0],Mesh[i+1][j][1],
+                       Mesh[i+1][j][2]);
+            glEnd();
+        }
+    }
+    glPopMatrix();
+    glEndList();
+}
+
+void generateFallMesh()
+{
+    landscapeFallTile = glGenLists(1);
+    glNewList(landscapeFallTile, GL_COMPILE );
+    
+    double min = 9999;
+    double max = 0;
+    glPushMatrix();
+    glColorMaterial(GL_FRONT, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+    for(int i = 0; i < MH-1; i++)
+    {
+        for(int j = 0; j < MW-1; j++)
+        {
+            
+            
+            double yValue = Mesh[i][j][1];
+            double xValue = Mesh[i][j][0];
+            double zValue = Mesh[i][j][2];
+            if(yValue > max) {
+                max = yValue;
+            }
+            if(yValue < min) {
+                min = yValue;
+            }
+            
             if(yValue > 0 && yValue < .3) {
                 //go from (0,102,0) -> (139,69,19)
                 float adjustedRed = yValue * 850.0f;
@@ -169,11 +248,173 @@ void generateMesh()
     glPopMatrix();
     glEndList();
 }
+
+void generateSummerMesh()
+{
+    landscapeSummerTile = glGenLists(1);
+    glNewList(landscapeSummerTile, GL_COMPILE );
+    
+    double min = 9999;
+    double max = 0;
+    glPushMatrix();
+    glColorMaterial(GL_FRONT, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+    for(int i = 0; i < MH-1; i++)
+    {
+        for(int j = 0; j < MW-1; j++)
+        {
+            
+            
+            double yValue = Mesh[i][j][1];
+            double xValue = Mesh[i][j][0];
+            double zValue = Mesh[i][j][2];
+            if(yValue > max) {
+                max = yValue;
+            }
+            if(yValue < min) {
+                min = yValue;
+            }
+            
+             if(yValue > 0.4) {
+                //glColor3ub(230,232,227);
+            } else if(yValue < 0 && yValue > -0.3) {
+                // transition from seafloor to grass
+                float adjustedRed = (fabs(yValue) * 850.0f);
+                if(adjustedRed < 0) {
+                    adjustedRed = 0;
+                }
+                float adjustedGreen = 102.0f + (fabs(yValue) * 445.0f);
+                if(adjustedGreen < 102) {
+                    adjustedGreen = 102;
+                }
+                float adjustedBlue = (fabs(yValue) * 210.0f);
+                if(adjustedGreen < 0) {
+                    adjustedGreen = 0;
+                }
+                glColor3ub(adjustedRed,adjustedGreen,adjustedBlue);
+            } else if(yValue < -0.3) {
+                // seafloor yellowish
+                glColor3ub(239.67,227.47,59.2);
+            } else {
+                //glColor3f(0, yValue + 0.4, 0);
+                // normal grass green
+                glColor3ub(0,102,0);
+            }
+            // let's draw the land
+            glBegin(GL_QUADS);
+            glNormal3f(Normals[i][j].x,
+                       Normals[i][j].y, Normals[i][j].z);
+            glVertex3f(Mesh[i][j][0],Mesh[i][j][1],
+                       Mesh[i][j][2]);
+            glNormal3f(Normals[i][j+1].x, Normals[i][j+1].y,
+                       Normals[i][j+1].z);
+            glVertex3f(Mesh[i][j+1][0],Mesh[i][j+1][1],
+                       Mesh[i][j+1][2]);
+            glNormal3f(Normals[i+1][j+1].x,
+                       Normals[i+1][j+1].y, Normals[i+1][j+1].z);
+            glVertex3f(Mesh[i+1][j+1][0],Mesh[i+1][j+1][1],
+                       Mesh[i+1][j+1][2]);
+            glNormal3f(Normals[i+1][j].x, Normals[i+1][j].y,
+                       Normals[i+1][j].z);
+            glVertex3f(Mesh[i+1][j][0],Mesh[i+1][j][1],
+                       Mesh[i+1][j][2]);
+            glEnd();
+        }
+    }
+    glPopMatrix();
+    glEndList();
+}
+
+void generateSpringMesh()
+{
+    landscapeSpringTile = glGenLists(1);
+    glNewList(landscapeSpringTile, GL_COMPILE );
+    
+    double min = 9999;
+    double max = 0;
+    glPushMatrix();
+    glColorMaterial(GL_FRONT, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+    for(int i = 0; i < MH-1; i++)
+    {
+        for(int j = 0; j < MW-1; j++)
+        {
+            
+            
+            double yValue = Mesh[i][j][1];
+            double xValue = Mesh[i][j][0];
+            double zValue = Mesh[i][j][2];
+            if(yValue > max) {
+                max = yValue;
+            }
+            if(yValue < min) {
+                min = yValue;
+            }
+            
+            if(yValue > 0 && yValue < .3) {
+                //go from (0,102,0) -> (139,69,19)
+                float adjustedRed = yValue * 850.0f;
+                float adjustedGreen = 102.0f - (yValue * 82.5f);
+                float adjustedBlue = yValue * 47.5f;
+                glColor3ub(adjustedRed,adjustedGreen,adjustedBlue);
+            }  else if(yValue > 0.3) {
+                glColor3ub(230,232,227);
+            } else if(yValue < 0 && yValue > -0.3) {
+                // transition from seafloor to grass
+                float adjustedRed = (fabs(yValue) * 850.0f);
+                if(adjustedRed < 0) {
+                    adjustedRed = 0;
+                }
+                float adjustedGreen = 102.0f + (fabs(yValue) * 445.0f);
+                if(adjustedGreen < 102) {
+                    adjustedGreen = 102;
+                }
+                float adjustedBlue = (fabs(yValue) * 210.0f);
+                if(adjustedGreen < 0) {
+                    adjustedGreen = 0;
+                }
+                glColor3ub(adjustedRed,adjustedGreen,adjustedBlue);
+            } else if(yValue < -0.3) {
+                // seafloor yellowish
+                glColor3ub(239.67,227.47,59.2);
+            } else {
+                //glColor3f(0, yValue + 0.4, 0);
+                // normal grass green
+                glColor3ub(0,102,0);
+            }
+            // let's draw the land
+            glBegin(GL_QUADS);
+            glNormal3f(Normals[i][j].x,
+                       Normals[i][j].y, Normals[i][j].z);
+            glVertex3f(Mesh[i][j][0],Mesh[i][j][1],
+                       Mesh[i][j][2]);
+            glNormal3f(Normals[i][j+1].x, Normals[i][j+1].y,
+                       Normals[i][j+1].z);
+            glVertex3f(Mesh[i][j+1][0],Mesh[i][j+1][1],
+                       Mesh[i][j+1][2]);
+            glNormal3f(Normals[i+1][j+1].x,
+                       Normals[i+1][j+1].y, Normals[i+1][j+1].z);
+            glVertex3f(Mesh[i+1][j+1][0],Mesh[i+1][j+1][1],
+                       Mesh[i+1][j+1][2]);
+            glNormal3f(Normals[i+1][j].x, Normals[i+1][j].y,
+                       Normals[i+1][j].z);
+            glVertex3f(Mesh[i+1][j][0],Mesh[i+1][j][1],
+                       Mesh[i+1][j][2]);
+            glEnd();
+        }
+    }
+    glPopMatrix();
+    glEndList();
+}
+
 //initialise the display settings
 void myInit()
 {
     createMesh();
-    generateMesh();
+    generateWinterMesh();
+    generateFallMesh();
+    generateSummerMesh();
+    generateSpringMesh();
     GLfloat lightIntensity[] = {0.9, 0.9, 0.9, 1.0f};
     GLfloat lightPosition[]={0.0f,1.0f, 0.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
@@ -195,44 +436,59 @@ void displayMesh(void)
     glColor3f(1,1,1);
     glPushMatrix();
         glTranslated(1.9,0, 0);
-        glCallList(landscapeTile);
+        glCallList(landscapeWinterTile);
     glPopMatrix();
     glPushMatrix();
-        glCallList(landscapeTile);
+        glCallList(landscapeFallTile);
     glPopMatrix();
     glPushMatrix();
         glTranslated(-1.9,0, 0);
-        glCallList(landscapeTile);
+        glCallList(landscapeSummerTile);
     glPopMatrix();
 
     glPushMatrix();
         glTranslated(0,0, -1.9);
-        glCallList(landscapeTile);
+        glCallList(landscapeFallTile);
     glPopMatrix();
 
     glPushMatrix();
         glTranslated(0,0, 1.9);
-        glCallList(landscapeTile);
+        glCallList(landscapeFallTile);
     glPopMatrix();
 
     glPushMatrix();
         glTranslated(1.9,0, 1.9);
-        glCallList(landscapeTile);
+        glCallList(landscapeWinterTile);
     glPopMatrix();
 
     glPushMatrix();
         glTranslated(-1.9,0, 1.9);
-        glCallList(landscapeTile);
+        glCallList(landscapeSummerTile);
     glPopMatrix();
 
     glPushMatrix();
         glTranslated(-1.9,0, -1.9);
-        glCallList(landscapeTile);
+        glCallList(landscapeSummerTile);
     glPopMatrix();
 
     glPushMatrix();
         glTranslated(1.9,0, -1.9);
-        glCallList(landscapeTile);
+        glCallList(landscapeWinterTile);
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(-3.6,0, -1.9);
+        glCallList(landscapeSpringTile);
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(-3.6,0, 0);
+        glCallList(landscapeSpringTile);
+    glPopMatrix();
+    
+    glPushMatrix();
+        glTranslated(-3.6,0, 1.9);
+        glCallList(landscapeSpringTile);
     glPopMatrix();
 
     glPushMatrix();
