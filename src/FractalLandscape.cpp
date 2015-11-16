@@ -18,6 +18,7 @@
 
 
 #include "camera.h" //download from course website
+#include "FractalTree.h"
 
 #define MW 80
 #define MH 80
@@ -28,6 +29,10 @@ GLuint landscapeWinterTile;
 GLuint landscapeFallTile;
 GLuint landscapeSpringTile;
 GLuint landscapeSummerTile;
+GLuint trees_sp;
+GLuint trees_su;
+GLuint trees_au;
+GLuint trees_wi;
 
 Camera cam; // global camera object
 //quick and nasty normal calculation
@@ -407,6 +412,58 @@ void generateSpringMesh()
     glEndList();
 }
 
+void produceTrees_summer()
+{
+	trees_su = glGenLists(1);
+	glNewList(trees_su, GL_COMPILE);
+	leafColor = GREEN;
+	glColor3f(0.5, 0.5, 0);
+	glLineWidth(1);
+	moveTo(0.0, 0.0);
+	turnTo(90);
+	produceString(Fstr, 2, 1);
+	glEndList();
+}
+
+void produceTrees_spring()
+{
+	trees_sp = glGenLists(1);
+	glNewList(trees_sp, GL_COMPILE);
+	leafColor = PINK;
+	glColor3f(0.5, 0.5, 0);
+	glLineWidth(1);
+	moveTo(0.0, 0.0);
+	turnTo(90);
+	produceString(Fstr, 2, 1);
+	glEndList();
+}
+
+void produceTrees_autumn()
+{
+	trees_au = glGenLists(1);
+	glNewList(trees_au, GL_COMPILE);
+	leafColor = ORANGE;
+	glColor3f(0.5, 0.5, 0);
+	glLineWidth(1);
+	moveTo(0.0, 0.0);
+	turnTo(90);
+	produceString(Fstr, 2, 1);
+	glEndList();
+}
+
+void produceTrees_winter()
+{
+	trees_wi = glGenLists(1);
+	glNewList(trees_wi, GL_COMPILE);
+	leafColor = WHITE;
+	glColor3f(0.5, 0.5, 0);
+	glLineWidth(1);
+	moveTo(0.0, 0.0);
+	turnTo(90);
+	produceString(Fstr, 2, 1);
+	glEndList();
+}
+
 //initialise the display settings
 void myInit()
 {
@@ -415,6 +472,10 @@ void myInit()
     generateFallMesh();
     generateSummerMesh();
     generateSpringMesh();
+	produceTrees_spring();
+	produceTrees_summer();
+	produceTrees_autumn();
+	produceTrees_winter();
     GLfloat lightIntensity[] = {0.9, 0.9, 0.9, 1.0f};
     GLfloat lightPosition[]={0.0f,1.0f, 0.0f, 0.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
@@ -428,6 +489,60 @@ void myInit()
     cam.slide(0,0, 1.5);
     cam.setShape(30.0f, 1.0f, 0.5f, 50.0f);
 }
+
+void drawTree(int leafSize, LEAF_COLORS type, float x, float y, float z)
+{
+	glPushMatrix();
+	glScalef(0.0003, 0.0003, 0.0003);
+	glTranslatef(x, y, z);
+	switch (type)
+	{
+	case GREEN:
+		glCallList(trees_su);
+		glRotatef(90, 0, 1, 0);
+		glCallList(trees_su);
+		break;
+	case PINK:
+		glCallList(trees_sp);
+		glRotatef(90, 0, 1, 0);
+		glCallList(trees_sp);
+		break;
+	case ORANGE:
+		glCallList(trees_au);
+		glRotatef(90, 0, 1, 0);
+		glCallList(trees_au);
+		break;
+	case WHITE:
+		glCallList(trees_wi);
+		glRotatef(90, 0, 1, 0);
+		glCallList(trees_wi);
+		break;
+	default:
+		break;
+	}
+	
+	glPopMatrix();
+}
+
+void drawTrees()
+{
+	float xOffset = 0.0;
+	float zOffset = 0.0;
+	{
+		drawTree(3.5, ORANGE, (1940 + xOffset), 500, (0 + zOffset));
+		drawTree(3.5, ORANGE, (-1940 + xOffset), 500, (0 + zOffset));
+		drawTree(3.5, ORANGE, (0 + xOffset), 500, (1940 + zOffset));
+		drawTree(3.5, ORANGE, (0 + xOffset), 500, (-1940 + zOffset));
+	}
+	xOffset = -6350;
+	{
+		drawTree(3.5, GREEN, (1940 + xOffset), 500, (0 + zOffset));
+		drawTree(3.5, GREEN, (-1940 + xOffset), 500, (0 + zOffset));
+		drawTree(3.5, GREEN, (0 + xOffset), 500, (1940 + zOffset));
+		drawTree(3.5, GREEN, (0 + xOffset), 500, (-1940 + zOffset));
+	}
+}
+
 //glutDisplayFunc
 //notice most of the set up values are not in here but in myInit
 void displayMesh(void)
@@ -492,11 +607,13 @@ void displayMesh(void)
     glPopMatrix();
 
     glPushMatrix();
-    glColor4f(0, 0, .8, 0.4);
+    glColor4f(0, 0, .8, 0.6);
     glTranslated(0,-0.25, 0);
     glScaled(23, .12, 23);
     glutSolidCube(1.0);
     glPopMatrix();
+
+	drawTrees();
 
     glFlush();
     glutPostRedisplay();
@@ -582,7 +699,7 @@ void myMouse(int button, int state, int x, int y)
         if(button == GLUT_LEFT_BUTTON)
         {
             lastx = x;
-            currentCameraSpeed = -0.005; //forward movement amount
+            currentCameraSpeed = -0.035; //forward movement amount
         }
         else if(button == GLUT_RIGHT_BUTTON)
         {
@@ -596,7 +713,7 @@ void myMouse(int button, int state, int x, int y)
     glutPostRedisplay(); // draw it again
 }
 
-float lookSpeed = 0.3;
+float lookSpeed = 0.5;
 void idleFlying()
 {
     cam.slide(0,0,currentCameraSpeed);
@@ -629,7 +746,7 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH );
     glutInitWindowSize(800,800);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow("fly");
+    glutCreateWindow("fly, you fools");
     glutDisplayFunc(displayMesh);
     glutKeyboardFunc(myKeyboard);
     glutKeyboardUpFunc(myKeyboardUp);
