@@ -7,8 +7,8 @@
 
 ///////////////FORWARD DEALS AT LINE 164 WITH CALCULATING THE NEXT POINT IN THE TREE TO DRAW TO////////////////////////
 
-#include "GL\freeglut.h"
-#include "GL\gl.h"
+#include "GL/freeglut.h"
+#include "GL/gl.h"
 #include <cstdio>
 #include <cmath>
 
@@ -41,11 +41,11 @@ Angle3 CD;  //current turtle direction
 
 //string production rules
 char atom[25] = "F";                      //starting string
-char Fstr[30] = "F<F-[-F>+F]+[^+Fv-F]";   //F production rule
-char Xstr[25] = "";                       //X production rule
+char Fstr[100] = "FFF-[-FX+FX+FX]+[+FX-FX-FX]";  //F production rule
+char Xstr[25] = "X-[FL+FL+FL]+[+FL-FL-FL]";                       //X production rule
 char Ystr[25] = "";                       //Y production rule
 float angle = 22;                         //turn angle
-int length = 5;
+int length = 20;                          //forward length
 
 Point2 saveTut[100];
 Angle3 saveAng[100];
