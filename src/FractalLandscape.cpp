@@ -37,8 +37,7 @@ GLuint all_trees;
 
 GLuint cloud;
 
-float fallMod = 0.0;
-float fallMod2 = 0.0;
+float fallMod = 0.0, fallMod2 = 0.0, fallMod3 = 0.0;
 
 int lastx = 0;
 float currentCameraSpeed = 0;
@@ -609,28 +608,28 @@ void drawFallingLeaves()
 	glPushMatrix();
 	glColor3f(0.5, 0.25, 0.0);
 	glScalef(0.0003, 0.000025, 0.0003);
-	glTranslatef(2150, (3750 * 2) - fallMod, 0);
+	glTranslatef(2350, (6050 * 2) - fallMod2, 0);
 	glutSolidSphere(20, 10, 10);
 	glPopMatrix();
 
 	glPushMatrix();
 	glColor3f(0.5, 0.25, 0.0);
 	glScalef(0.0003, 0.000025, 0.0003);
-	glTranslatef(1950, (3700 * 2) - fallMod, 0);
+	glTranslatef(1950, (4400 * 2) - fallMod, 0);
 	glutSolidSphere(20, 10, 10);
 	glPopMatrix();
 
 	glPushMatrix();
 	glColor3f(0.5, 0.25, 0.0);
 	glScalef(0.0003, 0.000025, 0.0003);
-	glTranslatef(2050, (3850 * 2) - fallMod2, 150);
+	glTranslatef(2250, (6150 * 2) - fallMod3, 150);
 	glutSolidSphere(20, 10, 10);
 	glPopMatrix();
 
 	glPushMatrix();
 	glColor3f(0.5, 0.25, 0.0);
 	glScalef(0.0003, 0.000025, 0.0003);
-	glTranslatef(2050, (3900 * 2) - fallMod2, -150);
+	glTranslatef(2050, (4650 * 2) - fallMod, -150);
 	glutSolidSphere(20, 10, 10);
 	glPopMatrix();
 }
@@ -638,10 +637,13 @@ void drawFallingLeaves()
 void processCam() {
   fallMod += 20.0;
   fallMod2 += 30.0;
-  if (fallMod >= 1600.0)
+  fallMod3 += 31.5;
+  if (fallMod >= 2000.0)
     fallMod = 0.0;
-  if (fallMod2 >= 1600.0)
+  if (fallMod2 >= 4000.0)
     fallMod2 = 0.0;
+  if (fallMod3 >= 4050.0)
+	  fallMod3 = 0.0;
 
     cam.slide(0,0,currentCameraSpeed);
 
@@ -664,10 +666,13 @@ void processCam() {
         cam.roll(lookSpeed * 2);
     }	fallMod += 20.0;
       fallMod2 += 30.0;
-      if (fallMod >= 1600.0)
+	  fallMod3 += 31.5;
+      if (fallMod >= 2000.0)
         fallMod = 0.0;
-      if (fallMod2 >= 1600.0)
+      if (fallMod2 >= 4000.0)
         fallMod2 = 0.0;
+	  if (fallMod3 >= 4050.0)
+		  fallMod3 = 0.0;
 
         cam.slide(0,0,currentCameraSpeed);
 
