@@ -40,6 +40,18 @@ GLuint cloud;
 float fallMod = 0.0;
 float fallMod2 = 0.0;
 
+int lastx = 0;
+float currentCameraSpeed = 0;
+float lookSpeed = 0.5;
+
+// Some handles for controlling what direction is being pressed
+bool lookLeft = false;
+bool lookRight = false;
+bool lookUp = false;
+bool lookDown = false;
+bool rollLeft = false;
+bool rollRight = false;
+
 Camera cam; // global camera object
 //quick and nasty normal calculation
 Vector3 newell4(GLfloat pt[4][3])
@@ -623,6 +635,61 @@ void drawFallingLeaves()
 	glPopMatrix();
 }
 
+void processCam() {
+  fallMod += 20.0;
+  fallMod2 += 30.0;
+  if (fallMod >= 1600.0)
+    fallMod = 0.0;
+  if (fallMod2 >= 1600.0)
+    fallMod2 = 0.0;
+
+    cam.slide(0,0,currentCameraSpeed);
+
+    // Let's see if we need to move in and look in any direction
+    if(lookLeft) {
+        cam.yaw(-lookSpeed);
+    } else if(lookRight) {
+        cam.yaw(lookSpeed);
+    }
+
+    if(lookUp) {
+        cam.pitch(-lookSpeed);
+    } else if(lookDown) {
+        cam.pitch(lookSpeed);
+    }
+
+    if(rollLeft) {
+        cam.roll(-lookSpeed * 2);
+    } else if(rollRight) {
+        cam.roll(lookSpeed * 2);
+    }	fallMod += 20.0;
+      fallMod2 += 30.0;
+      if (fallMod >= 1600.0)
+        fallMod = 0.0;
+      if (fallMod2 >= 1600.0)
+        fallMod2 = 0.0;
+
+        cam.slide(0,0,currentCameraSpeed);
+
+        // Let's see if we need to move in and look in any direction
+        if(lookLeft) {
+            cam.yaw(-lookSpeed);
+        } else if(lookRight) {
+            cam.yaw(lookSpeed);
+        }
+
+        if(lookUp) {
+            cam.pitch(-lookSpeed);
+        } else if(lookDown) {
+            cam.pitch(lookSpeed);
+        }
+
+        if(rollLeft) {
+            cam.roll(-lookSpeed * 2);
+        } else if(rollRight) {
+            cam.roll(lookSpeed * 2);
+        }
+}
 //glutDisplayFunc
 //notice most of the set up values are not in here but in myInit
 void displayMesh(void)
@@ -698,17 +765,13 @@ void displayMesh(void)
 
 	drawFallingLeaves();
 
-    glFlush();
-    glutPostRedisplay();
+
+  processCam();
+  glFlush();
+  glutPostRedisplay();
 }
 
-// Some handles for controlling what direction is being pressed
-bool lookLeft = false;
-bool lookRight = false;
-bool lookUp = false;
-bool lookDown = false;
-bool rollLeft = false;
-bool rollRight = false;
+
 
 // Keyboard for handling keyboard key down presses
 void myKeyboard(unsigned char key, int x, int y)
@@ -765,9 +828,6 @@ void myKeyboardUp(unsigned char key, int x, int y) {
     }
 }
 
-int lastx = 0;
-float currentCameraSpeed = 0;
-
 void myMovedMouse(int x, int y)
 {
     cam.yaw((x - lastx)/10.0); //divide by 20.0 to make it slower
@@ -796,38 +856,13 @@ void myMouse(int button, int state, int x, int y)
     glutPostRedisplay(); // draw it again
 }
 
-float lookSpeed = 0.5;
+
+
 void idleFlying()
 {
-	fallMod += 20.0;
-	fallMod2 += 30.0;
-	if (fallMod >= 1600.0)
-		fallMod = 0.0;
-	if (fallMod2 >= 1600.0)
-		fallMod2 = 0.0;
 
-    cam.slide(0,0,currentCameraSpeed);
-
-    // Let's see if we need to move in and look in any direction
-    if(lookLeft) {
-        cam.yaw(-lookSpeed);
-    } else if(lookRight) {
-        cam.yaw(lookSpeed);
-    }
-
-    if(lookUp) {
-        cam.pitch(-lookSpeed);
-    } else if(lookDown) {
-        cam.pitch(lookSpeed);
-    }
-
-    if(rollLeft) {
-        cam.roll(-lookSpeed * 2);
-    } else if(rollRight) {
-        cam.roll(lookSpeed * 2);
-    }
-
-    glutPostRedisplay();
+  processCam();
+  //  glutPostRedisplay();
 }
 
 int main(int argc, char** argv)
