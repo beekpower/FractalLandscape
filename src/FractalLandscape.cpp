@@ -35,6 +35,8 @@ GLuint trees_au;
 GLuint trees_wi;
 GLuint all_trees;
 
+GLuint cloud;
+
 float fallMod = 0.0;
 float fallMod2 = 0.0;
 
@@ -180,7 +182,7 @@ void generateFallMesh()
 {
     landscapeFallTile = glGenLists(1);
     glNewList(landscapeFallTile, GL_COMPILE );
-    
+
     double min = 9999;
     double max = 0;
     glPushMatrix();
@@ -190,8 +192,8 @@ void generateFallMesh()
     {
         for(int j = 0; j < MW-1; j++)
         {
-            
-            
+
+
             double yValue = Mesh[i][j][1];
             double xValue = Mesh[i][j][0];
             double zValue = Mesh[i][j][2];
@@ -201,7 +203,7 @@ void generateFallMesh()
             if(yValue < min) {
                 min = yValue;
             }
-            
+
             if(yValue > 0 && yValue < .3) {
                 //go from (0,102,0) -> (139,69,19)
                 float adjustedRed = yValue * 850.0f;
@@ -262,7 +264,7 @@ void generateSummerMesh()
 {
     landscapeSummerTile = glGenLists(1);
     glNewList(landscapeSummerTile, GL_COMPILE );
-    
+
     double min = 9999;
     double max = 0;
     glPushMatrix();
@@ -272,8 +274,8 @@ void generateSummerMesh()
     {
         for(int j = 0; j < MW-1; j++)
         {
-            
-            
+
+
             double yValue = Mesh[i][j][1];
             double xValue = Mesh[i][j][0];
             double zValue = Mesh[i][j][2];
@@ -283,7 +285,7 @@ void generateSummerMesh()
             if(yValue < min) {
                 min = yValue;
             }
-            
+
              if(yValue > 0.4) {
                 //glColor3ub(230,232,227);
             } else if(yValue < 0 && yValue > -0.3) {
@@ -338,7 +340,7 @@ void generateSpringMesh()
 {
     landscapeSpringTile = glGenLists(1);
     glNewList(landscapeSpringTile, GL_COMPILE );
-    
+
     double min = 9999;
     double max = 0;
     glPushMatrix();
@@ -348,8 +350,8 @@ void generateSpringMesh()
     {
         for(int j = 0; j < MW-1; j++)
         {
-            
-            
+
+
             double yValue = Mesh[i][j][1];
             double xValue = Mesh[i][j][0];
             double zValue = Mesh[i][j][2];
@@ -359,7 +361,7 @@ void generateSpringMesh()
             if(yValue < min) {
                 min = yValue;
             }
-            
+
             if(yValue > 0 && yValue < .3) {
                 //go from (0,102,0) -> (139,69,19)
                 float adjustedRed = yValue * 850.0f;
@@ -540,6 +542,24 @@ void drawTrees()
 	glEndList();
 }
 
+void generateCloud() {
+  cloud = glGenLists(1);
+  glNewList(cloud, GL_COMPILE);
+    glBegin(GL_POLYGON);
+      glColor3f(1.0,1.0,1.0);
+      glVertex3f(1.0,0.7,-5.0);
+      glVertex3f(1.3,1.0,-5.0);
+      glVertex3f(0.7,1.5,-5.0);
+      glVertex3f(0.0,1.5,-5.0);
+      glVertex3f(-0.7,1.5,-5.0);
+      glVertex3f(-1.4,1.5,-5.0);
+      glVertex3f(-1.7,1.0,-5.0);
+      glVertex3f(-1.5,0.7,-5.0);
+      glVertex3f(-1.0,0.5,-5.0);
+    glEnd();
+  glEndList();
+}
+
 //initialise the display settings
 void myInit()
 {
@@ -552,6 +572,7 @@ void myInit()
 	produceTrees_summer();
 	produceTrees_autumn();
 	produceTrees_winter();
+  generateCloud();
 	drawTrees();
     GLfloat lightIntensity[] = { 0.8, 0.8, 0.8, 1.0f};
 	GLfloat lightIntensity2[] = { 0.8, 0.8, 0.8, 1.0f };
@@ -610,6 +631,7 @@ void displayMesh(void)
     glColor3f(1,1,1);
     glPushMatrix();
         glTranslated(1.9,0, 0);
+        glCallList(cloud);
         glCallList(landscapeWinterTile);
     glPopMatrix();
     glPushMatrix();
@@ -649,17 +671,17 @@ void displayMesh(void)
         glTranslated(1.9,0, -1.9);
         glCallList(landscapeWinterTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(-3.6,0, -1.9);
         glCallList(landscapeSpringTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(-3.6,0, 0);
         glCallList(landscapeSpringTile);
     glPopMatrix();
-    
+
     glPushMatrix();
         glTranslated(-3.6,0, 1.9);
         glCallList(landscapeSpringTile);
