@@ -35,7 +35,7 @@ char Ystr[25] = "";                       //Y production rule
 float angle = 22;                         //turn angle
 int length = 20;                          //forward length
 
-float scale = 3.5;
+float leafScale = 3.5;
 
 int count = 0;
 
@@ -62,7 +62,7 @@ void drawLeaf()
 		break;
 
 	case PINK:
-
+		glColor3f(1.0, 0.5, 1.0);
 		break;
 
 	case ORANGE:
@@ -70,17 +70,18 @@ void drawLeaf()
 		break;
 
 	case WHITE:
+		glColor3f(1.0, 1.0, 1.0);
 		break;
 	}
 	glPointSize(5);
 	glPushMatrix();
 	glTranslated(0.0, 0.0, 1.0);
 	glBegin(GL_POLYGON);
-	glVertex2f(CP.x - (8* scale), CP.y + (2*scale));
-	glVertex2f(CP.x, CP.y + (10* scale));
-	glVertex2f(CP.x + (8* scale), CP.y + (2* scale));
-	glVertex2f(CP.x + (3* scale), CP.y - (6*scale));
-	glVertex2f(CP.x - (3* scale), CP.y - (6*scale));
+	glVertex2f(CP.x - (8* leafScale), CP.y + (2* leafScale));
+	glVertex2f(CP.x, CP.y + (10* leafScale));
+	glVertex2f(CP.x + (8* leafScale), CP.y + (2* leafScale));
+	glVertex2f(CP.x + (3* leafScale), CP.y - (6* leafScale));
+	glVertex2f(CP.x - (3* leafScale), CP.y - (6* leafScale));
 	glEnd();
 	glPopMatrix();
 	glColor3f(0.5, 0.25, 0);

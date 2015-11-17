@@ -33,6 +33,10 @@ GLuint trees_sp;
 GLuint trees_su;
 GLuint trees_au;
 GLuint trees_wi;
+GLuint all_trees;
+
+float fallMod = 0.0;
+float fallMod2 = 0.0;
 
 Camera cam; // global camera object
 //quick and nasty normal calculation
@@ -417,8 +421,8 @@ void produceTrees_summer()
 	trees_su = glGenLists(1);
 	glNewList(trees_su, GL_COMPILE);
 	leafColor = GREEN;
+	leafScale = 3.5;
 	glColor3f(0.5, 0.5, 0);
-	glLineWidth(1);
 	moveTo(0.0, 0.0);
 	turnTo(90);
 	produceString(Fstr, 2, 1);
@@ -430,8 +434,8 @@ void produceTrees_spring()
 	trees_sp = glGenLists(1);
 	glNewList(trees_sp, GL_COMPILE);
 	leafColor = PINK;
+	leafScale = 2.0;
 	glColor3f(0.5, 0.5, 0);
-	glLineWidth(1);
 	moveTo(0.0, 0.0);
 	turnTo(90);
 	produceString(Fstr, 2, 1);
@@ -443,8 +447,8 @@ void produceTrees_autumn()
 	trees_au = glGenLists(1);
 	glNewList(trees_au, GL_COMPILE);
 	leafColor = ORANGE;
+	leafScale = 3.5;
 	glColor3f(0.5, 0.5, 0);
-	glLineWidth(1);
 	moveTo(0.0, 0.0);
 	turnTo(90);
 	produceString(Fstr, 2, 1);
@@ -456,38 +460,12 @@ void produceTrees_winter()
 	trees_wi = glGenLists(1);
 	glNewList(trees_wi, GL_COMPILE);
 	leafColor = WHITE;
+	leafScale = 1.8;
 	glColor3f(0.5, 0.5, 0);
-	glLineWidth(1);
 	moveTo(0.0, 0.0);
 	turnTo(90);
 	produceString(Fstr, 2, 1);
 	glEndList();
-}
-
-//initialise the display settings
-void myInit()
-{
-    createMesh();
-    generateWinterMesh();
-    generateFallMesh();
-    generateSummerMesh();
-    generateSpringMesh();
-	produceTrees_spring();
-	produceTrees_summer();
-	produceTrees_autumn();
-	produceTrees_winter();
-    GLfloat lightIntensity[] = {0.9, 0.9, 0.9, 1.0f};
-    GLfloat lightPosition[]={0.0f,1.0f, 0.0f, 0.0f};
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
-    Point3 eye, look;
-    Vector3 up;
-    eye.set(1,1,1); //set the eye location
-    look.set(0,0,0); //set the look at coord
-    up.set(0,1,0); //specify the up vector
-    cam.set(eye, look, up); // make the initial camera
-    cam.slide(0,0, 1.5);
-    cam.setShape(30.0f, 1.0f, 0.5f, 50.0f);
 }
 
 void drawTree(int leafSize, LEAF_COLORS type, float x, float y, float z)
@@ -520,12 +498,14 @@ void drawTree(int leafSize, LEAF_COLORS type, float x, float y, float z)
 	default:
 		break;
 	}
-	
+
 	glPopMatrix();
 }
 
 void drawTrees()
 {
+	all_trees = glGenLists(1);
+	glNewList(all_trees, GL_COMPILE);
 	float xOffset = 0.0;
 	float zOffset = 0.0;
 	{
@@ -541,6 +521,85 @@ void drawTrees()
 		drawTree(3.5, GREEN, (0 + xOffset), 500, (1940 + zOffset));
 		drawTree(3.5, GREEN, (0 + xOffset), 500, (-1940 + zOffset));
 	}
+	xOffset = -6350;
+	zOffset = -6350;
+	{
+		drawTree(3.5, PINK, (1940 + xOffset), 500, (0 + zOffset));
+		drawTree(3.5, PINK, (-1940 + xOffset), 500, (0 + zOffset));
+		drawTree(3.5, PINK, (0 + xOffset), 500, (1940 + zOffset));
+		drawTree(3.5, PINK, (0 + xOffset), 500, (-1940 + zOffset));
+	}
+	xOffset = 0;
+	zOffset = -6350;
+	{
+		drawTree(3.5, WHITE, (1940 + xOffset), 500, (0 + zOffset));
+		drawTree(3.5, WHITE, (-1940 + xOffset), 500, (0 + zOffset));
+		drawTree(3.5, WHITE, (0 + xOffset), 500, (1940 + zOffset));
+		drawTree(3.5, WHITE, (0 + xOffset), 500, (-1940 + zOffset));
+	}
+	glEndList();
+}
+
+//initialise the display settings
+void myInit()
+{
+    createMesh();
+    generateWinterMesh();
+    generateFallMesh();
+    generateSummerMesh();
+    generateSpringMesh();
+	produceTrees_spring();
+	produceTrees_summer();
+	produceTrees_autumn();
+	produceTrees_winter();
+	drawTrees();
+    GLfloat lightIntensity[] = { 0.8, 0.8, 0.8, 1.0f};
+	GLfloat lightIntensity2[] = { 0.8, 0.8, 0.8, 1.0f };
+    GLfloat lightPosition[] = {0.0f, 1.0f, 0.0f, 0.0f};
+	GLfloat lightPosition2[] = { 0.0f, -1.0f, 0.0f, 0.0f };
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+	glLightfv(GL_LIGHT1, GL_POSITION, lightPosition2);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, lightIntensity2);
+    Point3 eye, look;
+    Vector3 up;
+    eye.set(1,1,1); //set the eye location
+    look.set(0,0,0); //set the look at coord
+    up.set(0,1,0); //specify the up vector
+    cam.set(eye, look, up); // make the initial camera
+    cam.slide(0,0, 1.5);
+    cam.setShape(30.0f, 1.0f, 0.5f, 50.0f);
+}
+
+void drawFallingLeaves()
+{
+	glPushMatrix();
+	glColor3f(0.5, 0.25, 0.0);
+	glScalef(0.0003, 0.000025, 0.0003);
+	glTranslatef(2150, (3750 * 2) - fallMod, 0);
+	glutSolidSphere(20, 10, 10);
+	glPopMatrix();
+
+	glPushMatrix();
+	glColor3f(0.5, 0.25, 0.0);
+	glScalef(0.0003, 0.000025, 0.0003);
+	glTranslatef(1950, (3700 * 2) - fallMod, 0);
+	glutSolidSphere(20, 10, 10);
+	glPopMatrix();
+
+	glPushMatrix();
+	glColor3f(0.5, 0.25, 0.0);
+	glScalef(0.0003, 0.000025, 0.0003);
+	glTranslatef(2050, (3850 * 2) - fallMod2, 150);
+	glutSolidSphere(20, 10, 10);
+	glPopMatrix();
+
+	glPushMatrix();
+	glColor3f(0.5, 0.25, 0.0);
+	glScalef(0.0003, 0.000025, 0.0003);
+	glTranslatef(2050, (3900 * 2) - fallMod2, -150);
+	glutSolidSphere(20, 10, 10);
+	glPopMatrix();
 }
 
 //glutDisplayFunc
@@ -613,7 +672,9 @@ void displayMesh(void)
     glutSolidCube(1.0);
     glPopMatrix();
 
-	drawTrees();
+	glCallList(all_trees);
+
+	drawFallingLeaves();
 
     glFlush();
     glutPostRedisplay();
@@ -716,6 +777,13 @@ void myMouse(int button, int state, int x, int y)
 float lookSpeed = 0.5;
 void idleFlying()
 {
+	fallMod += 20.0;
+	fallMod2 += 30.0;
+	if (fallMod >= 1600.0)
+		fallMod = 0.0;
+	if (fallMod2 >= 1600.0)
+		fallMod2 = 0.0;
+
     cam.slide(0,0,currentCameraSpeed);
 
     // Let's see if we need to move in and look in any direction
@@ -756,6 +824,7 @@ int main(int argc, char** argv)
     //turn on the lights
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
