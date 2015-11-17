@@ -104,6 +104,8 @@ void forward(float dist, int isVisible)
 	const float rpd = 0.017453393;
 	float x1 = CP.x + dist*cos(rpd*CD);
 	float y1 = CP.y + dist*sin(rpd*CD);
+	y1 += getrandom(0, 9);
+	x1 += getrandom(0, 8);
 	if (isVisible)
 		lineTo(x1, y1);
 	else
